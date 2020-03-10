@@ -1,0 +1,23 @@
+{
+  "name": "manga_crawler",
+  "version": "0.0.1",
+  "description": "Manga crawling app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kurokeita/manga_crawler.git"
+  },
+  "author": "kurokeita",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kurokeita/manga_crawler/issues"
+  },
+  "homepage": "https://github.com/kurokeita/manga_crawler#readme",
+  "dependencies": {
+    "got": "^10.6.0",
+    "htmlparser2": "^4.1.0"
+  }
+}
