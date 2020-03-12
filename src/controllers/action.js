@@ -1,5 +1,6 @@
 const Const = require('../const')
 const Mangahere = require('./Mangahere')
+const puppeteer = require('puppeteer')
 
 async function search(req, res) {
     const site = req.body.site

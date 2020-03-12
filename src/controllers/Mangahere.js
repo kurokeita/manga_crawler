@@ -86,29 +86,26 @@ async function getInfo(link) {
 
 async function getPages(link) {
     try {
-        const browser = await puppeteer.launch({headless: true})
+        const browser = await puppeteer.launch({
+            headless: true,
+            args: ['--no-sandbox']
+        });
         const page = await browser.newPage()
-        await page.goto('https://google.com')
-        const dom = await page.evaluate(() => {
-            return {
-              width: document.documentElement.clientWidth,
-              height: document.documentElement.clientHeight,
-              deviceScaleFactor: window.devicePixelRatio
-            }
-          })
-        console.log('after')
-        console.log(dom)
-        // const response = await got(link, {
-        //     responseType: 'text',
-        //     resolveBodyOnly: true
-        // })
-        // const $ = cheerio.load(response)
-        // const count = parseInt($('.pager-list-left > span').eq(0).children().eq(-2).text()) - 1
-        // const image = $('.reader-main-img').attr()
-        await browser.close()
+        await page.goto(link)
+        const dom = await page.content()
+        const $ = await cheerio.load(dom)
+        const count = parseInt($('.pager-list-left > span').eq(0).children().eq(-2).text()) - 1
+        const image = $('.reader-main-img').attr('src')
+        let images = []
+        const firstPage = parseInt(image.match(/[\d]+(?=(\.jpg))/)[0])
+        for (let i = 0; i < count; i++) {
+            let pageNo = `${firstPage + i}`.padStart(3, '0')
+            let link = `https:${image.replace(/[\d]+(?=(\.jpg))/, pageNo)}`
+            images.push(link)
+        }
         return {
-            // count: count,
-            // image: image
+            count: count,
+            images: images,
         }
     } catch (err) {
         return err
