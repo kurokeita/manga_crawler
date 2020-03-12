@@ -37,7 +37,7 @@ async function search(name, page = 1) {
         return ([
             {
                 total: list.length,
-                nextPos: list.length ? page + 1 : null
+                nextPos: list.length ? parseInt(page) + 1 : null
             },
             ...list
         ])
