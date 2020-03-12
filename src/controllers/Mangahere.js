@@ -103,6 +103,7 @@ async function getPages(link) {
             let link = `https:${image.replace(/[\d]+(?=(\.jpg))/, pageNo)}`
             images.push(link)
         }
+        await browser.close()
         return {
             count: count,
             images: images,
