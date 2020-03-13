@@ -1,6 +1,9 @@
 const got = require('got')
 const cheerio = require('cheerio')
 const puppeteer = require('puppeteer')
+const axios = require('axios')
+const {promisify} = require('util');
+const {CookieJar} = require('tough-cookie');
 
 async function search(name, page = 1) {
     try {
@@ -86,27 +89,68 @@ async function getInfo(link) {
 
 async function getPages(link) {
     try {
-        const browser = await puppeteer.launch({
-            headless: true,
-            args: ['--no-sandbox']
-        });
-        const page = await browser.newPage()
-        await page.goto(link)
-        const dom = await page.content()
-        const $ = await cheerio.load(dom)
-        const count = parseInt($('.pager-list-left > span').eq(0).children().eq(-2).text()) - 1
-        const image = $('.reader-main-img').attr('src')
+
+        const html = await got(`https://mangahere.cc${link}`)
+        let cookies = html.headers['set-cookie']
+        const $ = await cheerio.load(html.body)
+        const count = html.body.match(/(?<=(var imagecount=))[\d]+(?=\;)/)[0]
+        const cid = html.body.match(/(?<=(var chapterid =))[\d]+(?=\;)/)[0]
+        const url = link.match(/^.+\/(?=(\d+\.html))/)[0]
+        const key = html.body.match(/(eval\(function).+(\}\)\))/)[0]
+        const dmkey = eval(key)[0].attribs.value
         let images = []
-        const firstPage = parseInt(image.match(/[\d]+(?=(\.jpg))/)[0])
-        for (let i = 0; i < count; i++) {
-            let pageNo = `${firstPage + i}`.padStart(3, '0')
-            let link = `https:${image.replace(/[\d]+(?=(\.jpg))/, pageNo)}`
-            images.push(link)
-        }
-        await browser.close()
+        const apiURL1 = `https://mangahere.cc${url}chapterfun.ashx?cid=${cid}&page=1&key=`
+        const apiURL2 = `https://mangahere.cc${url}chapterfun.ashx?cid=${cid}&page=2&key=${dmkey}`
+
+        const apiResponse = await got(
+            apiURL1,
+            {
+                headers: {
+                    referer: `https://mangahere.cc${link}`,
+                }
+            }
+        )
+        apiResponse.headers['set-cookie'].forEach((e) => {
+            if (!e.match(/^(SERVERID|__cf_bm|__cfduid)/)) {
+                cookies.push(e)
+            }
+        })
+        cookies.push("edShow=1; path=/")
+        let cookie = ''
+        cookies.forEach((e) => {
+            cookie += `${e.split('; ')[0]};`
+        })
+
+        const apiResponse2 = await got(
+            apiURL2,
+            {
+                headers: {
+                    referer: `https://mangahere.cc${link}`,
+                    cookie: cookie
+                },
+                resolveBodyOnly: true
+            }
+        )
+        
+        // eval(apiResponse2)
         return {
-            count: count,
-            images: images,
+            count,
+            cid,
+            url,
+            dmkey,
+            referer: `https://mangahere.cc${link}`,
+            apiURL2,
+            cookies,
+            apiResponse2,
+            // responseHeader1,
+            // responseData2,
+            // apiResponse1
+            // cookies_count: cookies.length,
+            // cookies,
+            // cookie,
+            // apiResponse2,
+            // test
+            // d
         }
     } catch (err) {
         return err
