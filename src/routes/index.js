@@ -14,4 +14,9 @@ route.post('/manga/search', ActionController.search)
 route.post('/manga/getinfo', ActionController.getInfo)
 route.post('/manga/getpages', ActionController.getPages)
 
+route.get('/testAPI', (req, res) => {
+    console.log(req.headers)
+    res.json(req.headers)
+})
+
 module.exports = route

@@ -2,8 +2,8 @@ const got = require('got')
 const cheerio = require('cheerio')
 const puppeteer = require('puppeteer')
 const axios = require('axios')
-const {promisify} = require('util');
-const {CookieJar} = require('tough-cookie');
+const {promisify} = require('util')
+const {CookieJar} = require('tough-cookie')
 
 async function search(name, page = 1) {
     try {
@@ -98,9 +98,9 @@ async function getPages(link) {
         const url = link.match(/^.+\/(?=(\d+\.html))/)[0]
         const key = html.body.match(/(eval\(function).+(\}\)\))/)[0]
         const dmkey = eval(key)[0].attribs.value
-        let images = []
         const apiURL1 = `https://mangahere.cc${url}chapterfun.ashx?cid=${cid}&page=1&key=`
         const apiURL2 = `https://mangahere.cc${url}chapterfun.ashx?cid=${cid}&page=2&key=${dmkey}`
+        const apiURLTest = 'http://api-nodejs.ddns.net/testapi'
 
         const apiResponse = await got(
             apiURL1,
@@ -111,50 +111,52 @@ async function getPages(link) {
             }
         )
         apiResponse.headers['set-cookie'].forEach((e) => {
-            if (!e.match(/^(SERVERID|__cf_bm|__cfduid)/)) {
+            if (e.match(/^(image_time_cookie|dm5imgpag)/)) {
                 cookies.push(e)
             }
         })
-        cookies.push("edShow=1; path=/")
+        eval(apiResponse.body)
+        let links = [...d]
         let cookie = ''
         cookies.forEach((e) => {
             cookie += `${e.split('; ')[0]};`
         })
-
-        const apiResponse2 = await got(
-            apiURL2,
-            {
-                headers: {
-                    referer: `https://mangahere.cc${link}`,
-                    cookie: cookie
-                },
-                resolveBodyOnly: true
-            }
-        )
-        
-        // eval(apiResponse2)
+        let _res = {}
+        await new Promise((resolve) => setTimeout(async function() {
+            _res = await getResponse(apiURL2, link, cookie)
+            resolve()
+        }, 3000))
+        eval(_res.data)
+        links.push(...d)
         return {
             count,
-            cid,
-            url,
-            dmkey,
-            referer: `https://mangahere.cc${link}`,
-            apiURL2,
-            cookies,
-            apiResponse2,
-            // responseHeader1,
-            // responseData2,
-            // apiResponse1
-            // cookies_count: cookies.length,
+            // cid,
+            // url,
+            // dmkey,
+            // referer: `https://mangahere.cc${link}`,
+            // apiURL2,
             // cookies,
             // cookie,
-            // apiResponse2,
-            // test
-            // d
+            // apiResponse: apiResponse.body,
+            // _res: _res.data,
+            links: links
         }
     } catch (err) {
         return err
     }
+}
+
+async function getResponse(apiURL, link, cookie) {
+    const apiResponse = await axios.get(
+        apiURL,
+        {
+            headers: {
+                referer: `https://mangahere.cc${link}`,
+                Cookie: cookie
+            },
+        }
+    )
+    return apiResponse
 }
 
 module.exports = {
