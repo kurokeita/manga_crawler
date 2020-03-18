@@ -125,6 +125,7 @@ async function getPages(link) {
         }, 3000))
         eval(_res.data)
         d.shift()
+        d.pop()
         links.push(...d)
         return {
             count,
