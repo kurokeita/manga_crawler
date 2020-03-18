@@ -37,8 +37,21 @@ async function getPages(req, res) {
     }
 }
 
+async function getTrending(req, res) {
+    const site = req.body.site
+    switch (site) {
+        case Const.MANGAHERE: {
+            const result = await Mangahere.getTrending(req.body.getAll)
+            res.json(result)
+        }
+        default:
+            res.json()
+    }
+}
+
 module.exports = {
     search: (req, res) => search(req, res),
     getInfo: (req, res) => getInfo(req, res),
     getPages: (req, res) => getPages(req, res),    
+    getTrending: (req, res) => getTrending(req, res),    
 }

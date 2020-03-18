@@ -145,6 +145,37 @@ async function getPages(link) {
     }
 }
 
+async function getTrending(getAll) {
+    try {
+        const url = (getAll) ? 'https://mangahere.cc/hot' : 'https://mangahere.cc'
+        const html = await axios.get(url)
+        const $ = await cheerio.load(html.data)
+        const ul = $('.manga-list-1-list').eq(0)
+        const li = ul.children('li')
+        let list = []
+        li.each((i, e) => {
+            let href = $(e).children('a').attr()
+            console.log(href)
+            let cover = $(e).children('a').children('img').attr('src')
+            console.log(cover)
+            let lastChapter = $(e).children('.manga-list-1-item-subtitle')
+            console.log(lastChapter)
+            list.push({
+                link: `https://www.mangahere.cc${href.href}`,
+                title: href.title,
+                cover: cover,
+                lastChapter: lastChapter.text(),
+                lastChapterLink: `https://www.mangahere.cc${lastChapter.children('a').attr('href')}`
+            })
+        })
+        return {
+            list
+        }
+    } catch (err) {
+        return err
+    }
+}
+
 async function getResponse(apiURL, link, cookie) {
     const apiResponse = await axios.get(
         apiURL,
@@ -161,5 +192,6 @@ async function getResponse(apiURL, link, cookie) {
 module.exports = {
     search: (name, page) => search(name, page),
     getInfo: link => getInfo(link),
-    getPages: link => getPages(link)
+    getPages: link => getPages(link),
+    getTrending: getAll => getTrending(getAll),
 }
