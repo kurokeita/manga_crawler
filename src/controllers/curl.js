@@ -1,5 +1,4 @@
 const got = require('got')
-const htmlparser2 = require('htmlparser2')
 const cheerio = require('cheerio')
 
 async function test(req, res) {

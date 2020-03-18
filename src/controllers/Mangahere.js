@@ -1,9 +1,6 @@
 const got = require('got')
 const cheerio = require('cheerio')
-const puppeteer = require('puppeteer')
 const axios = require('axios')
-const {promisify} = require('util')
-const {CookieJar} = require('tough-cookie')
 
 async function search(name, page = 1) {
     try {
@@ -116,7 +113,7 @@ async function getPages(link) {
             }
         })
         eval(apiResponse.body)
-        let links = [d[0]]
+        let links = [...d]
         let cookie = ''
         cookies.forEach((e) => {
             cookie += `${e.split('; ')[0]};`
@@ -127,6 +124,7 @@ async function getPages(link) {
             resolve()
         }, 3000))
         eval(_res.data)
+        d.shift()
         links.push(...d)
         return {
             count,
