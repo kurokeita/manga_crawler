@@ -155,11 +155,8 @@ async function getTrending(getAll) {
         let list = []
         li.each((i, e) => {
             let href = $(e).children('a').attr()
-            console.log(href)
             let cover = $(e).children('a').children('img').attr('src')
-            console.log(cover)
             let lastChapter = $(e).children('.manga-list-1-item-subtitle')
-            console.log(lastChapter)
             list.push({
                 link: `https://www.mangahere.cc${href.href}`,
                 title: href.title,
