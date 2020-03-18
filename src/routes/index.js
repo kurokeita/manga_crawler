@@ -13,6 +13,7 @@ route.post('/curl/search', CurlController.search)
 route.post('/manga/search', ActionController.search)
 route.post('/manga/getinfo', ActionController.getInfo)
 route.post('/manga/getpages', ActionController.getPages)
+route.post('/manga/trending', ActionController.getTrending)
 
 route.get('/testAPI', (req, res) => {
     console.log(req.headers)
