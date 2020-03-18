@@ -116,7 +116,7 @@ async function getPages(link) {
             }
         })
         eval(apiResponse.body)
-        let links = [...d]
+        let links = [d[0]]
         let cookie = ''
         cookies.forEach((e) => {
             cookie += `${e.split('; ')[0]};`
