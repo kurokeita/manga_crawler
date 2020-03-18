@@ -26,11 +26,11 @@ async function search(name, page = 1) {
                 cover = $(item).children('a').children('img').attr('src')
                 lastChapter = $(item).children('.manga-list-4-item-tip').eq(1).children('a').attr()
                 list.push({
-                    link: `https://www.mangahere.cc${href.href}`,
+                    link: `${href.href}`,
                     title: href.title,
                     cover: cover,
                     lastChapter: lastChapter.title,
-                    lastChapterLink: `https://www.mangahere.cc${lastChapter.href}`
+                    lastChapterLink: `${lastChapter.href}`
                 })
             })
         }
@@ -158,11 +158,36 @@ async function getTrending(getAll) {
             let cover = $(e).children('a').children('img').attr('src')
             let lastChapter = $(e).children('.manga-list-1-item-subtitle')
             list.push({
-                link: `https://www.mangahere.cc${href.href}`,
+                link: `${href.href}`,
                 title: href.title,
                 cover: cover,
                 lastChapter: lastChapter.text(),
-                lastChapterLink: `https://www.mangahere.cc${lastChapter.children('a').attr('href')}`
+                lastChapterLink: `${lastChapter.children('a').attr('href')}`
+            })
+        })
+        return {
+            list
+        }
+    } catch (err) {
+        return err
+    }
+}
+
+async function getNewUpdate(getAll) {
+    try {
+        const url = (getAll) ? 'https://mangahere.cc/lastest' : 'https://mangahere.cc'
+        const html = await axios.get(url)
+        const $ = await cheerio.load(html.data)
+        const ul = $('.manga-list-4-list')
+        const li = ul.children('li')
+        let list = []
+        li.each((i, e) => {
+            let href = $(e).children('a').attr()
+            let cover = $(e).children('a').children('img').attr('src')
+            list.push({
+                link: `${href.href}`,
+                title: href.title,
+                cover: cover,
             })
         })
         return {
@@ -191,4 +216,5 @@ module.exports = {
     getInfo: link => getInfo(link),
     getPages: link => getPages(link),
     getTrending: getAll => getTrending(getAll),
+    getNewUpdate: getAll => getNewUpdate(getAll,)
 }
