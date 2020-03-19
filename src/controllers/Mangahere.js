@@ -184,10 +184,12 @@ async function getNewUpdate(getAll) {
         li.each((i, e) => {
             let href = $(e).children('a').attr()
             let cover = $(e).children('a').children('img').attr('src')
+            let newChapter = ($(e).children('.manga-list-4-item-subtitle').text()).match(/^.+(New Chapter)/)[0]
             list.push({
                 link: `${href.href}`,
                 title: href.title,
                 cover: cover,
+                newChapter: newChapter
             })
         })
         return {
