@@ -145,7 +145,7 @@ async function getPages(link) {
     }
 }
 
-async function getTrending(getAll, page) {
+async function getTrending(getAll = false, page = 1) {
     try {
         const url =`https://mangahere.cc/hot/${page}`
         const html = await axios.get(url)
@@ -176,7 +176,7 @@ async function getTrending(getAll, page) {
     }
 }
 
-async function getNewUpdate(getAll, page) {
+async function getNewUpdate(getAll = false, page = 1) {
     try {
         const url = `https://mangahere.cc/latest/${page}`
         const html = await axios.get(url)
