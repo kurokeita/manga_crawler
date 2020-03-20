@@ -145,9 +145,9 @@ async function getPages(link) {
     }
 }
 
-async function getTrending(getAll = false, page = 1) {
+async function getTrending(getAll = false) {
     try {
-        const url =`https://mangahere.cc/hot/${page}`
+        const url =`https://mangahere.cc/hot`
         const html = await axios.get(url)
         const $ = await cheerio.load(html.data)
         const ul = $('.manga-list-1-list').eq(0)
