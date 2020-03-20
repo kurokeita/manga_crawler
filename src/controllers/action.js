@@ -41,7 +41,7 @@ async function getTrending(req, res) {
     const site = req.body.site
     switch (site) {
         case Const.MANGAHERE: {
-            const result = await Mangahere.getTrending(req.body.getAll)
+            const result = await Mangahere.getTrending(req.body.getAll, req.body.page)
             res.json(result)
         }
         default:
@@ -52,7 +52,7 @@ async function getNewUpdate(req, res) {
     const site = req.body.site
     switch (site) {
         case Const.MANGAHERE: {
-            const result = await Mangahere.getNewUpdate(req.body.getAll)
+            const result = await Mangahere.getNewUpdate(req.body.getAll, req.body.page)
             res.json(result)
         }
         default:
