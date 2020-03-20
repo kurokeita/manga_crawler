@@ -145,9 +145,9 @@ async function getPages(link) {
     }
 }
 
-async function getTrending(getAll) {
+async function getTrending(getAll, page) {
     try {
-        const url = (getAll) ? 'https://mangahere.cc/hot' : 'https://mangahere.cc'
+        const url =`https://mangahere.cc/hot/${page}`
         const html = await axios.get(url)
         const $ = await cheerio.load(html.data)
         const ul = $('.manga-list-1-list').eq(0)
@@ -165,6 +165,9 @@ async function getTrending(getAll) {
                 lastChapterLink: `${lastChapter.children('a').attr('href')}`
             })
         })
+        if (!getAll) {
+            list = list.slice(0, 6)
+        }
         return {
             list
         }
@@ -173,9 +176,9 @@ async function getTrending(getAll) {
     }
 }
 
-async function getNewUpdate(getAll) {
+async function getNewUpdate(getAll, page) {
     try {
-        const url = (getAll) ? 'https://mangahere.cc/lastest' : 'https://mangahere.cc'
+        const url = `https://mangahere.cc/latest/${page}`
         const html = await axios.get(url)
         const $ = await cheerio.load(html.data)
         const ul = $('.manga-list-4-list')
@@ -192,6 +195,9 @@ async function getNewUpdate(getAll) {
                 newChapter: newChapter
             })
         })
+        if (!getAll) {
+            list = list.slice(0, 6)
+        }
         return {
             list
         }
@@ -217,6 +223,6 @@ module.exports = {
     search: (name, page) => search(name, page),
     getInfo: link => getInfo(link),
     getPages: link => getPages(link),
-    getTrending: getAll => getTrending(getAll),
-    getNewUpdate: getAll => getNewUpdate(getAll,)
+    getTrending: (getAll, page) => getTrending(getAll, page),
+    getNewUpdate: (getAll, page) => getNewUpdate(getAll, page)
 }
