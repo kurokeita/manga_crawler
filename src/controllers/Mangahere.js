@@ -150,21 +150,24 @@ async function getTrending(getAll = false) {
         const url =`https://mangahere.cc/hot`
         const html = await axios.get(url)
         const $ = await cheerio.load(html.data)
-        const ul = $('.manga-list-1-list').eq(0)
-        const li = ul.children('li')
+        const ul = $('.manga-list-1-list')
         let list = []
-        li.each((i, e) => {
-            let href = $(e).children('a').attr()
-            let cover = $(e).children('a').children('img').attr('src')
-            let lastChapter = $(e).children('.manga-list-1-item-subtitle')
-            list.push({
-                link: `${href.href}`,
-                title: href.title,
-                cover: cover,
-                lastChapter: lastChapter.text(),
-                lastChapterLink: `${lastChapter.children('a').attr('href')}`
+        for (let i = 0; i < ul.length; i++) {
+            let li = ul.eq(i).children('li')
+            li.each((i, e) => {
+                let href = $(e).children('a').attr()
+                let cover = $(e).children('a').children('img').attr('src')
+                let lastChapter = $(e).children('.manga-list-1-item-subtitle')
+                list.push({
+                    link: `${href.href}`,
+                    title: href.title,
+                    cover: cover,
+                    lastChapter: lastChapter.text(),
+                    lastChapterLink: `${lastChapter.children('a').attr('href')}`
+                })
             })
-        })
+        }
+        // const li = ul.children('li')
         if (!getAll) {
             list = list.slice(0, 6)
         }
