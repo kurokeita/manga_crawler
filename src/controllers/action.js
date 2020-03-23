@@ -41,7 +41,18 @@ async function getTrending(req, res) {
     const site = req.body.site
     switch (site) {
         case Const.MANGAHERE: {
-            const result = await Mangahere.getTrending(req.body.getAll)
+            const result = await Mangahere.getTrending(req.body.getAll, req.body.page)
+            res.json(result)
+        }
+        default:
+            res.json()
+    }
+}
+async function getNewUpdate(req, res) {
+    const site = req.body.site
+    switch (site) {
+        case Const.MANGAHERE: {
+            const result = await Mangahere.getNewUpdate(req.body.getAll, req.body.page)
             res.json(result)
         }
         default:
@@ -52,6 +63,7 @@ async function getTrending(req, res) {
 module.exports = {
     search: (req, res) => search(req, res),
     getInfo: (req, res) => getInfo(req, res),
-    getPages: (req, res) => getPages(req, res),    
-    getTrending: (req, res) => getTrending(req, res),    
+    getPages: (req, res) => getPages(req, res),
+    getTrending: (req, res) => getTrending(req, res),
+    getNewUpdate: (req, res) => getNewUpdate(req, res),
 }

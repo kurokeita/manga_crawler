@@ -14,6 +14,7 @@ route.post('/manga/search', ActionController.search)
 route.post('/manga/getinfo', ActionController.getInfo)
 route.post('/manga/getpages', ActionController.getPages)
 route.post('/manga/trending', ActionController.getTrending)
+route.post('/manga/latest', ActionController.getNewUpdate)
 
 route.get('/testAPI', (req, res) => {
     console.log(req.headers)
