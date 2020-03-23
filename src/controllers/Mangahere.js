@@ -150,21 +150,57 @@ async function getTrending(getAll) {
         const url = (getAll) ? 'https://mangahere.cc/hot' : 'https://mangahere.cc'
         const html = await axios.get(url)
         const $ = await cheerio.load(html.data)
-        const ul = $('.manga-list-1-list').eq(0)
+        const ul = $('.manga-list-1-list')
+        let list = []
+        for (let i = 0; i < ul.length; i++) {
+            let li = ul.eq(i).children('li')
+            li.each((i, e) => {
+                let href = $(e).children('a').attr()
+                let cover = $(e).children('a').children('img').attr('src')
+                let lastChapter = $(e).children('.manga-list-1-item-subtitle')
+                list.push({
+                    link: `${href.href}`,
+                    title: href.title,
+                    cover: cover,
+                    lastChapter: lastChapter.text(),
+                    lastChapterLink: `${lastChapter.children('a').attr('href')}`
+                })
+            })
+        }
+        // const li = ul.children('li')
+        if (!getAll) {
+            list = list.slice(0, 6)
+        }
+        return {
+            list
+        }
+    } catch (err) {
+        return err
+    }
+}
+
+async function getNewUpdate(getAll = false, page = 1) {
+    try {
+        const url = `https://mangahere.cc/latest/${page}`
+        const html = await axios.get(url)
+        const $ = await cheerio.load(html.data)
+        const ul = $('.manga-list-4-list')
         const li = ul.children('li')
         let list = []
         li.each((i, e) => {
             let href = $(e).children('a').attr()
             let cover = $(e).children('a').children('img').attr('src')
-            let lastChapter = $(e).children('.manga-list-1-item-subtitle')
+            let newChapter = ($(e).children('.manga-list-4-item-subtitle').text()).match(/^.+(New Chapter)/)[0]
             list.push({
-                link: `https://www.mangahere.cc${href.href}`,
+                link: `${href.href}`,
                 title: href.title,
                 cover: cover,
-                lastChapter: lastChapter.text(),
-                lastChapterLink: `https://www.mangahere.cc${lastChapter.children('a').attr('href')}`
+                newChapter: newChapter
             })
         })
+        if (!getAll) {
+            list = list.slice(0, 6)
+        }
         return {
             list
         }
